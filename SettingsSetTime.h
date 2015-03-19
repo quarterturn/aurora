@@ -19,6 +19,8 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+#include "/Applications/Arduino-1.0.6.app/Contents/Resources/Java/libraries/Time/Time.h"
+//#include "t:\stuff\arduino-1.0.6-windows\arduino-1.0.6\libraries\Time\Time.h"
 
 #ifndef SettingsSetTime_H
 #define SettingsSetTime_H
@@ -85,7 +87,9 @@ public:
                     time.Hour = 0;
                 else if (time.Hour < 0)
                     time.Hour = 23;
-                RTC.write(time);
+                //RTC.write(time);                                
+                Teensy3Clock.set(makeTime(time));
+                setTime(makeTime(time));
                 break;
 
             case SetMinute:
@@ -94,7 +98,9 @@ public:
                     time.Minute = 1;
                 else if (time.Minute < 1)
                     time.Minute = 59;
-                RTC.write(time);
+                //RTC.write(time);
+                Teensy3Clock.set(makeTime(time));
+                setTime(makeTime(time));
                 break;
         }
     }

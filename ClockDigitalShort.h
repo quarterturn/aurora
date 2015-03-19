@@ -23,8 +23,11 @@
 // Portions of this code are adapted from PJRC DS1307RTC Library: https://www.pjrc.com/teensy/td_libs_DS1307RTC.html
 // Uses PJRC Time Library: https://www.pjrc.com/teensy/td_libs_Time.html
 
+#include "/Applications/Arduino-1.0.6.app/Contents/Resources/Java/libraries/Time/Time.h"
+
 #ifndef ClockDigitalShort_H
 #define ClockDigitalShort_H
+#define DEFAULT_TIME 1426726944
 
 enum SetTimeState{
     SetHour,
@@ -53,19 +56,21 @@ public:
         int x = 1;
 
         if (isTimeAvailable) {
-            uint8_t hour = time.Hour;
-            if (!twentyFourHour && hour > 12)
-                hour -= 12;
+            uint8_t theHour = hour();
+            if (!twentyFourHour && theHour > 12)
+                theHour -= 12;
 
             matrix.setForegroundFont(gohufont11b);
-            sprintf(timeBuffer, "%d:%02d", hour, time.Minute, time.Second);
+            sprintf(timeBuffer, "%d:%02d", theHour, minute(), second());
 
-            if (hour < 10)
+            if (theHour < 10)
                 x = 4;
         }
         else {
+            setTime(DEFAULT_TIME);
+            Teensy3Clock.set(DEFAULT_TIME);
             matrix.setForegroundFont(font3x5);
-            sprintf(timeBuffer, "No Clock");
+            sprintf(timeBuffer, "clk dflt");
         }
 
         matrix.setScrollOffsetFromTop(MATRIX_HEIGHT);
@@ -79,20 +84,20 @@ public:
     void drawSetTimeIndicator(SetTimeState state) {
         int16_t x = 0;
 
-        uint8_t hour = time.Hour;
-        if (!twentyFourHour && hour > 12)
-            hour -= 12;
+        uint8_t theHour = hour();
+        if (!twentyFourHour && theHour > 12)
+            theHour -= 12;
 
         switch (state) {
             case SetHour:
-                if (hour > 9)
+                if (theHour > 9)
                     x = 2;
                 else
                     x = -1;
                 break;
 
             case SetMinute:
-                if (hour > 9)
+                if (theHour > 9)
                     x = 20;
                 else
                     x = 17;
@@ -100,12 +105,12 @@ public:
         }
 
         // upper indicators (in case the clock's at the bottom)
-        if (state != SetHour || hour > 9)
+        if (state != SetHour || theHour > 9)
             matrix.drawTriangle(x + 0, y - 1, x + 1, y - 2, x + 2, y - 1, CRGB(CRGB::SlateGray));
         matrix.drawTriangle(x + 6, y - 1, x + 7, y - 2, x + 8, y - 1, CRGB(CRGB::SlateGray));
 
         // lower indicators (in case the clock's at the top)
-        if (state != SetHour || hour > 9)
+        if (state != SetHour || theHour > 9)
             matrix.drawTriangle(x + 0, y + 11, x + 1, y + 12, x + 2, y + 11, CRGB(CRGB::SlateGray));
         matrix.drawTriangle(x + 6, y + 11, x + 7, y + 12, x + 8, y + 11, CRGB(CRGB::SlateGray));
     }

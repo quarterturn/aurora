@@ -80,12 +80,15 @@ public:
         // reading from the RTC only takes 1-2ms, but there's no point in reading it every frame
         // so we'll only check it every so often, and then cache the time text
         if (millis() - lastRead > readInterval) {
-            if (RTC.read(time)) {
-                isTimeAvailable = true;
-                lastRead = millis();
+            //if (RTC.read(time)) {
+            getTeensy3Time();
+            if (timeStatus()!= timeSet) {
+                isTimeAvailable = false;
+                
             }
             else {
-                isTimeAvailable = false;
+                isTimeAvailable = true;
+                lastRead = millis();
             }
         }
     }
